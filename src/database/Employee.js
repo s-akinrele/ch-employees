@@ -11,6 +11,6 @@ let defaultRecords = [{
   createdAt: "2022-03-26T15:02:28.517Z"
 }];
 
-const databaseStore = new Database().createTable('employees', defaultRecords);
+const databaseStore = new Database().createTable('employees', defaultRecords, 'employeeId');
 
 export default databaseStore;

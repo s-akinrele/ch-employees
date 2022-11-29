@@ -4,8 +4,8 @@ class Database {
     this.dataStore = {};
   }
 
-  createTable(tableName, data=[]) {
-    const newTable = {[tableName]: data};
+  createTable(tableName, data=[], uniqueIdentifier) {
+    const newTable = {[tableName]: {records: data, uniqueIdentifier}}
     this.dataStore = Object.assign(this.dataStore, newTable)
     return this;
   }
@@ -13,22 +13,36 @@ class Database {
   all(tableName) {
     return new Promise((resolve, reject) => {
       if (tableName in this.dataStore) {
-        resolve(this.dataStore[tableName])
+        resolve(this.dataStore[tableName].records)
       } else {
-        reject(new Error('ReferenceError', {cause: `${tableName} does not exist`}))
+        reject(new Error('ReferenceError', {cause: `${tableName} does not exist`}));
       }
     })
   }
 
-  insert(tableName, data={}, uniqueIdentifier) {
+  insert(tableName, data={}) {
     return new Promise((resolve, reject) => {
       if (tableName in this.dataStore) {
         let table = this.dataStore[tableName];
-        const newData = Object.assign({[uniqueIdentifier]: uuidv4()}, data, {createdAt: (new Date()).toISOString()})
-        table.push(newData)
+        const newData = Object.assign({[table.uniqueIdentifier]: uuidv4()}, data, {createdAt: (new Date()).toISOString()});
+        table.records.push(newData);
         resolve(newData);
       } else {
         reject(new Error('StandardError', {cause: `something went wrong`}))
+      }
+    })
+  }
+
+  findOne(tableName, id) {
+    return new Promise((resolve, reject) => {
+      if (tableName in this.dataStore) {
+        const table = this.dataStore[tableName];
+        const record = table.records.find((record) => record[table.uniqueIdentifier] === id);
+        if (record) {
+          resolve(record)
+        } else {
+          reject(new Error('NotFoundError', {cause: `record with ${id} does not exist`}))
+        }
       }
     })
   }
