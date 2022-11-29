@@ -9,4 +9,4 @@ let databaseStore = [{
   createdAt: "2022-03-26T15:02:28.517Z"
 }];
 
-module.exports = databaseStore;
+export default databaseStore;

@@ -1,4 +1,4 @@
-const database = require('../database/Employee');
+import database from '../database/Employee';
 
 const Employee = {
   fetchAll: (req, res) => {
@@ -14,4 +14,4 @@ const Employee = {
   }
 }
 
-module.exports = Employee;
+export default Employee;

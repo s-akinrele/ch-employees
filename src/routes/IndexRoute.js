@@ -1,7 +1,7 @@
-const EmployeeRoutes = require('./EmployeeRoute'); 
+import EmployeeRoutes from './EmployeeRoute';
 
 const routes = (router) => {
   EmployeeRoutes(router)
 }
 
-module.exports = routes;
+export default routes;

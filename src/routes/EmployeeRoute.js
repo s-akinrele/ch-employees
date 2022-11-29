@@ -1,5 +1,5 @@
 
-const EmployeeController = require('../controllers/Employee');
+import EmployeeController from '../controllers/Employee';
 
 const employeeRoute = (router) => {
   router.route('/api/v1/employees')
@@ -7,4 +7,4 @@ const employeeRoute = (router) => {
   .post(EmployeeController.createEmployee);
 };
 
-module.exports = employeeRoute;
+export default employeeRoute;
