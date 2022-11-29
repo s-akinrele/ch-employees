@@ -5,8 +5,13 @@ class Database {
   }
 
   createTable(tableName, data=[], uniqueIdentifier) {
-    const newTable = {[tableName]: {records: data, uniqueIdentifier}}
+    const newTable = {[tableName]: {records: [], uniqueIdentifier, indices: {}}}
     this.dataStore = Object.assign(this.dataStore, newTable)
+    
+    if (data.length) {
+      this.insert(tableName, data[0])
+    }
+
     return this;
   }
 
@@ -24,8 +29,10 @@ class Database {
     return new Promise((resolve, reject) => {
       if (tableName in this.dataStore) {
         let table = this.dataStore[tableName];
+        const recordValues = Object.values(data);
         const newData = Object.assign({[table.uniqueIdentifier]: uuidv4()}, data, {createdAt: (new Date()).toISOString()});
         table.records.push(newData);
+        table.indices[recordValues.join()] = newData;
         resolve(newData);
       } else {
         reject(new Error('StandardError', {cause: `something went wrong`}))
@@ -43,6 +50,44 @@ class Database {
         } else {
           reject(new Error('NotFoundError', {cause: `record with ${id} does not exist`}))
         }
+      }
+    })
+  }
+
+  // firstName, lastName, department, status
+  where(tableName, options={}) {
+    const {search = {}, sortBy = []} = options
+    const searchKeys = Object.keys(search);
+    const table = this.dataStore[tableName];
+
+    return new Promise((resolve, reject) => {
+      if (table) {
+        let result = [];
+        const tableIndices = Object.keys(table.indices);
+        let existingIndices = {};
+
+        searchKeys.forEach(key => {
+          const currentIndices = tableIndices.filter(index => index.includes(search[key]));
+          existingIndices[currentIndices.join()] = currentIndices.join();
+        })
+
+        const indicesValue = Object.values(existingIndices);
+        indicesValue.forEach(index => {
+          if (table.indices[index])
+            result.push(table.indices[index])
+        })
+  
+        // console.log(indicesValue)
+        // console.log(table.indices)
+
+        if(result.length || searchKeys.length) {
+          resolve(result)
+        } else {
+          resolve(table.records)
+        }
+
+      } else {
+        reject(new Error('ReferenceError', {cause: `${tableName} does not exist`}));
       }
     })
   }

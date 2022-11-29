@@ -9,6 +9,8 @@ const employeeRoute = (router) => {
   router.route('/api/v1/employees/:id')
     .get(EmployeeController.show);
 
+  router.route('/api/v1/employees/search')
+    .post(EmployeeController.search)
 };
 
 export default employeeRoute;
