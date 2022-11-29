@@ -2,7 +2,7 @@
 const EmployeeController = require('../controllers/Employee');
 
 const employeeRoute = (router) => {
-  router.route('/employees')
+  router.route('/api/v1/employees')
   .get(EmployeeController.fetchAll)
   .post(EmployeeController.createEmployee);
 };
