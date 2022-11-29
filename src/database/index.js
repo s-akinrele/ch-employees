@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
+import {sortRecords} from '../utils/databaseTools';
 class Database {
   constructor() {
     this.dataStore = {};
@@ -7,7 +9,7 @@ class Database {
   createTable(tableName, data=[], uniqueIdentifier) {
     const newTable = {[tableName]: {records: [], uniqueIdentifier, indices: {}}}
     this.dataStore = Object.assign(this.dataStore, newTable)
-    
+
     if (data.length) {
       this.insert(tableName, data[0])
     }
@@ -54,7 +56,6 @@ class Database {
     })
   }
 
-  // firstName, lastName, department, status
   where(tableName, options={}) {
     const {search = {}, sortBy = []} = options
     const searchKeys = Object.keys(search);
@@ -68,22 +69,19 @@ class Database {
 
         searchKeys.forEach(key => {
           const currentIndices = tableIndices.filter(index => index.includes(search[key]));
-          existingIndices[currentIndices.join()] = currentIndices.join();
+          existingIndices[currentIndices.join()] = currentIndices;
         })
 
-        const indicesValue = Object.values(existingIndices);
+        const indicesValue = _.flatten(Object.values(existingIndices));
         indicesValue.forEach(index => {
           if (table.indices[index])
             result.push(table.indices[index])
-        })
-  
-        // console.log(indicesValue)
-        // console.log(table.indices)
+        });
 
         if(result.length || searchKeys.length) {
-          resolve(result)
+          resolve(sortRecords(result, sortBy))
         } else {
-          resolve(table.records)
+          resolve(sortRecords(table.records, sortBy))
         }
 
       } else {

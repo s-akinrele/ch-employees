@@ -26,6 +26,10 @@ const Employee = {
   },
 
   search: (req, res) => {
+    if (!req.body || Object.keys(req.body).length === 0) {
+      req.body = {sortBy: ['firstName', 'lastName']};
+    }
+
     Model.where('employees', req.body).then((response) => {
       res.status(200).send(response)
     }).catch((error) => {
