@@ -1,8 +1,12 @@
-import database from '../database/Employee';
+import EmployeeModel from '../database/Employee';
 
 const Employee = {
   fetchAll: (req, res) => {
-    res.json(database)
+    EmployeeModel.all('employees').then((employees) =>{
+      res.json(employees)
+    }).catch((error) => {
+      res.status(400).send({message: error.message});
+    })
   },
 
   createEmployee: (req, res) => {

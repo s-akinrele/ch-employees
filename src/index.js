@@ -1,10 +1,11 @@
 // importing the dependencies
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const routes = require('./routes/IndexRoute');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+
+import routes from './routes/IndexRoute'
 
 // defining the Express app
 const app = express();
@@ -12,7 +13,6 @@ const port = 3001;
 const router = express.Router();
 
 // defining an array to work as the database (temporary solution)
-
 routes(router);
 
 // adding Helmet to enhance your API's security
