@@ -1,20 +1,21 @@
-import EmployeeModel from '../database/Employee';
+import Model from '../database/Employee';
 
 const Employee = {
   fetchAll: (req, res) => {
-    EmployeeModel.all('employees').then((employees) =>{
-      res.json(employees)
+    Model.all('employees').then((employees) =>{
+      res.status(200).send(employees);
     }).catch((error) => {
       res.status(400).send({message: error.message});
     })
   },
 
   createEmployee: (req, res) => {
-    const employee = req.body;
-    console.log(employee);
-    database.push(employee);
-
-    res.json(employee);
+    Model.insert('employees', req.body, 'employeeId').then((employee) => {
+      console.log(employee)
+      res.status(201).send(employee)
+    }).catch((error) => {
+      res.status(400).send({message: error.message});
+    })
   }
 }
 

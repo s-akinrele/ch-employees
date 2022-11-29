@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 class Database {
   constructor() {
     this.dataStore = {};
@@ -15,6 +16,19 @@ class Database {
         resolve(this.dataStore[tableName])
       } else {
         reject(new Error('ReferenceError', {cause: `${tableName} does not exist`}))
+      }
+    })
+  }
+
+  insert(tableName, data={}, uniqueIdentifier) {
+    return new Promise((resolve, reject) => {
+      if (tableName in this.dataStore) {
+        let table = this.dataStore[tableName];
+        const newData = Object.assign({[uniqueIdentifier]: uuidv4()}, data, {createdAt: (new Date()).toISOString()})
+        table.push(newData)
+        resolve(newData);
+      } else {
+        reject(new Error('StandardError', {cause: `something went wrong`}))
       }
     })
   }
