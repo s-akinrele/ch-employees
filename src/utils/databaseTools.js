@@ -27,3 +27,10 @@ export const validateParams = (params) => {
     isValid: nullKeys.length === 0
   };
 }
+
+export const validateEmail = email => {
+  const emailRegex = new RegExp(/^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/, "gm");
+  const isValidEmail = emailRegex.test(email);
+
+  return isValidEmail;
+}

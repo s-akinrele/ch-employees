@@ -1,5 +1,5 @@
 import Model from '../database/Employee';
-import {validateParams} from '../utils/databaseTools';
+import {validateParams, validateEmail} from '../utils/databaseTools';
 
 const TABLE_NAME = 'employees';
 
@@ -15,17 +15,22 @@ const Employee = {
   create: (req, res) => {
     const validate = validateParams(req.body);
     if (validate.isValid) {
-      Model.where(TABLE_NAME, {search: {email: req.body.email}}).then(response => {
+      const emailAddress = req.body.email;
+      Model.where(TABLE_NAME, {search: {email: emailAddress}}).then(response => {
         if (response.length > 0) {
-          return res.status(409).send({ message: `There is a user with this email: ${req.body.email}` });
+          return res.status(409).send({ message: `There is a user with this email: ${emailAddress}` });
         }
 
-        const permittedParams = (({ email, firstName, lastName, department, salary, status}) => ({ email, firstName, lastName, department, salary, status }))(req.body);
-        Model.insert(TABLE_NAME, permittedParams).then((response) => {
-          res.status(201).send(response)
-        }).catch((error) => {
-          res.status(400).send({message: error.message});
-        })
+        if (validateEmail(emailAddress)) {
+          const permittedParams = (({ email, firstName, lastName, department, salary, status}) => ({ email, firstName, lastName, department, salary, status }))(req.body);
+          Model.insert(TABLE_NAME, permittedParams).then((response) => {
+            res.status(201).send(response)
+          }).catch((error) => {
+            res.status(400).send({message: error.message});
+          })
+        } else {
+          res.status(400).send({message: `${emailAddress} is not a valid email address`})
+        }
       })
     } else {
       res.status(400).send({message: ` Params ${validate.missingParams.join(', ')} must be present`})
