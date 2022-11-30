@@ -23,7 +23,7 @@ export const validateParams = (params) => {
   }
 
   return {
-    missingParams: nullKeys,
+    missingParams: _.flatten(nullKeys),
     isValid: nullKeys.length === 0
   };
 }
