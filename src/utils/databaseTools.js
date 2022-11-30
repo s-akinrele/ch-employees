@@ -7,7 +7,23 @@ export const sortRecords = (records, sortKeys) => {
 
 export const validateParams = (params) => {
   const validKeys = ['email', 'firstName', 'lastName', 'department', 'salary', 'status'];
-  const isValidKeys = Object.keys(params).every(key => validKeys.includes(key));
-  const isNotEmptyValues = Object.values(params).every(value => ![null, '', undefined].includes(value));
-  return isValidKeys && isNotEmptyValues;
+  let nullKeys = [];
+
+  const isValidParams = validKeys.every(item => params.hasOwnProperty(item));
+  const paramsKeys = Object.keys(params);
+
+  paramsKeys.forEach(key => {
+    if (validKeys.includes(key) && [null, '', undefined].includes(params[key])) {
+      nullKeys.push(key);
+    }
+  })
+
+  if (!isValidParams) {
+    nullKeys.push(_.difference(validKeys, paramsKeys))
+  }
+
+  return {
+    missingParams: nullKeys,
+    isValid: nullKeys.length === 0
+  };
 }
