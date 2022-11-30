@@ -10,10 +10,17 @@ const Employee = {
   },
 
   create: (req, res) => {
-    Model.insert('employees', req.body).then((response) => {
-      res.status(201).send(response)
-    }).catch((error) => {
-      res.status(400).send({message: error.message});
+    const tableName = 'employees';
+    Model.where(tableName, {search: {email: req.body.email}}).then(response => {
+      if (response.length > 0) {
+        return res.status(409).send({ message: `There is a user with this email: ${req.body.email}` });
+      }
+
+      Model.insert(tableName, req.body).then((response) => {
+        res.status(201).send(response)
+      }).catch((error) => {
+        res.status(400).send({message: error.message});
+      })
     })
   },
 

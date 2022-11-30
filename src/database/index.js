@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import {sortRecords} from '../utils/databaseTools';
+
 class Database {
   constructor() {
     this.dataStore = {};
